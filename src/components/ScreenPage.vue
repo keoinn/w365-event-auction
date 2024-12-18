@@ -5,12 +5,23 @@
     :style="{ backgroundImage: `url(${background_image})`, backgroundSize: 'cover' }"
     fluid
   >
-    <v-container max-height="100%" max-width="85%">
-      <v-row justify="center" align="center">
+    <v-container
+      max-height="100%"
+      max-width="85%"
+    >
+      <v-row
+        justify="center"
+        align="center"
+      >
         <v-col cols="5">
           <v-row>
-            <v-col cols="12" align="center">
-              <h1 class="product-title">{{ title }}</h1>
+            <v-col
+              cols="12"
+              align="center"
+            >
+              <h1 class="product-title">
+                {{ auctionItem.p_name }}
+              </h1>
             </v-col>
           </v-row>
 
@@ -19,7 +30,7 @@
             <v-col cols="6">
               <v-text-field
                 class="detailed-input"
-                :model-value="author"
+                :model-value="auctionItem.author"
                 readonly
               >
                 <template #label>
@@ -32,7 +43,7 @@
             <v-col cols="6">
               <v-text-field
                 class="detailed-input"
-                :model-value="source"
+                :model-value="auctionItem.source"
                 readonly
               >
                 <template #label>
@@ -47,7 +58,7 @@
               <v-text-field
                 v-maska="options"
                 class="detailed-input"
-                :model-value="start_price"
+                :model-value="auctionItem.start_price"
                 readonly
               >
                 <template #label>
@@ -59,7 +70,7 @@
             <v-col cols="6">
               <v-text-field
                 class="detailed-input"
-                :model-value="bidder"
+                v-model="showBidderStr"
                 readonly
               >
                 <template #label>
@@ -74,7 +85,7 @@
               <v-text-field
                 v-maska="options"
                 class="auction-input"
-                :model-value="current_price"
+                :model-value="auctionItem.get_price"
                 readonly
               >
                 <template #label>
@@ -92,7 +103,11 @@
             cycle
             :interval="3000"
           >
-            <v-carousel-item v-for="(item, i) in items" :key="i" :src="item.src" /> 
+            <v-carousel-item
+              v-for="(item, i) in items"
+              :key="i"
+              :src="item.src"
+            />
           </v-carousel>
         </v-col>
       </v-row>
@@ -102,24 +117,47 @@
 
 <script setup>
 import background_image from '@/assets/images/auction-background.jpg'
-import { ref } from 'vue'
-import { vMaska } from "maska/vue"
+import { ref, onMounted, watch } from 'vue'
+import { vMaska } from 'maska/vue'
+import { getAuction } from '@/plugins/utils/requests/api/products'
 
-const options = { 
-    mask: '9,99# 元',
-    tokens: {
-      9: { pattern: /[0-9]/, repeated: true },
-    },
-    reversed: true
-  };
+const empty_auction_item = {
+  pa_id: '',
+  sell_price: '',
+  author: '',
+  ct: '',
+  dt: '',
+  get_price: '',
+  p_name: '',
+  p_order: '',
+  p_owner: '',
+  p_sn: '',
+  production_desc: '',
+  production_img: '',
+  soldout_time: '',
+  source: '',
+  start_price: '',
+  ut: ''
+}
 
-const title = ref('斜倚倦容《40F 金色美人》')
-const author = ref('梁奕焚')
-const source = ref('洛德藝術')
-const start_price = ref(250000)
-const bidder = ref('商品競拍中')
-const current_price = ref(1250000)
-const items = ref([
+const auctionItem = ref(empty_auction_item)
+
+const options = {
+  mask: '9,99# 元',
+  tokens: {
+    9: { pattern: /[0-9]/, repeated: true }
+  },
+  reversed: true
+}
+
+const showBidderStr = ref('')
+
+const sync_timer = ref(null)
+
+const items = ref([])
+/**
+ * Demo data 
+ const items = ref([
   {
     src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg'
   },
@@ -136,6 +174,48 @@ const items = ref([
     src: 'https://e365.synet-app.com//img/upload/product/371_20230810164258.png'
   }
 ])
+*/
+
+onMounted(async () => {
+  await getAuctionInfo()
+  sync_timer.value = setInterval(getAuctionInfo, 500)
+  items.value = auctionItem.value.production_img.map((item) => {
+    return {
+      src: item
+    }
+  })
+  console.log(items.value)
+})
+
+watch(
+  () => auctionItem.value.pa_id,
+  () => {
+    console.log('Pa_id changed')
+    items.value = auctionItem.value.production_img.map((item) => {
+      return {
+        src: item
+      }
+    })
+  }
+)
+
+const getAuctionInfo = async () => {
+  const res = await getAuction()
+  auctionItem.value = res.data.result
+  if (auctionItem.value.get_price === null) {
+    auctionItem.value.get_price = auctionItem.value.start_price
+  }
+
+  showBidder()
+}
+
+const showBidder = () => {
+  if (auctionItem.value.p_owner) {
+    showBidderStr.value = auctionItem.value.p_owner
+  } else {
+    showBidderStr.value = '商品競拍中'
+  }
+}
 </script>
 
 <style lang="scss">

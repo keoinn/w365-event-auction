@@ -6,13 +6,6 @@ meta:
 <template>
   <v-container max-width="600">
     <v-row>
-      <v-col cols="6">
-        <TodoNoteCard
-          :content="['1. 確定得標人未完成', '2. 投影筆未實現']"
-        />
-      </v-col>
-    </v-row>
-    <v-row>
       <v-col cols="12">
         <v-card class="">
           <v-card-title>
@@ -211,6 +204,7 @@ meta:
 <script setup>
 import { ref, onMounted } from 'vue'
 import { vMaska } from 'maska/vue'
+import { onKeyStroke } from "@vueuse/core";
 import {
   getAuction,
   addAuctionPrice,
@@ -248,6 +242,16 @@ const auctionItem = ref({
 
 onMounted(async () => {
   await asyncAuctionInfo()
+
+  document.body.style.overflow = 'hidden'
+
+  onKeyStroke("PageUp", () => { 
+    console.log("PageUp Key is pressed");
+  });
+  onKeyStroke("PageDown", () => {
+    console.log("PageDown Key is pressed");
+    handleAddSellPrice()
+  });
 })
 
 const asyncAuctionInfo = async () => {
@@ -297,3 +301,10 @@ const handleNextAuction = async () => {
   await asyncAuctionInfo()
 }
 </script>
+
+<style>
+/* https://github.com/vuetifyjs/vuetify/issues/1197 */
+html {
+  overflow-y: hidden;
+}
+</style>
