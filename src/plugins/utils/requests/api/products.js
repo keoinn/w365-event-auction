@@ -109,3 +109,16 @@ export const changeAuction = (direction) => {
   return request
 }
 
+export const setFinalBidder = (auctionId, bidder_num) => {
+  const request = requestInstance({
+    method: 'POST',
+    url: `/auction/current/set-final-bidder`,
+    data: {
+      auctionId,
+      bidder_num,
+    }
+  })
+
+  return request
+}
+

@@ -1,48 +1,34 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { uploadExcel, getProducts } from '@/plugins/utils/requests/api/products.js'
-import ProductDataTable from '@/components/manager/ProductDataTable.vue'
+import { ref } from 'vue'
+import ParticipantDataTable from '@/components/manager/ParticipantDataTable.vue'
 import LoginDialog from '@/components/LoginDialog.vue'
 import { useAppStore } from '@/stores/app'
-
 const appStore = useAppStore()
-
-const uploadFile = ref(null)
-const productDataTableRef = ref(null)
+const participantDataTableRef = ref(null)
 const searchTerm = ref('')
-const handleUploadFile = async () => {
-  console.log(uploadFile.value)
-
-  const formData = new FormData()
-  formData.append('excel', uploadFile.value)
-
-  await uploadExcel(formData)
-  productDataTableRef.value.refresh()
-
-  uploadFile.value = null
-}
 
 const refreshData = () => {
-  productDataTableRef.value.refresh()
+  participantDataTableRef.value.refresh()
 }
-onMounted(async () => {
-  await getProducts()
-})
+
+const addNewParticipant = () => {
+  participantDataTableRef.value.addNewParticipant()
+}
 </script>
 
 <template>
   <v-container
-    v-show="appStore.adminLoginStatus"
+    v-show="appStore.userLoginStatus"
     max-width="1200"
   >
     <v-row>
       <v-col cols="12">
-        <v-card class="">
+        <v-card>
           <v-card-title>
             <v-row>
               <v-col cols="2">
                 <h2 class="table">
-                  拍賣品管理
+                  參與者管理
                   <v-icon
                     icon="mdi-refresh-circle"
                     size="32"
@@ -60,43 +46,24 @@ onMounted(async () => {
                   density="compact"
                 />
               </v-col>
+              <v-col cols="2">
+                <v-btn
+                  color="primary"
+                  text="新增參與者"
+                  @click="addNewParticipant"
+                />
+              </v-col>
             </v-row>
             <!-- <span class="">參與者管理</span> -->
             <v-spacer />
           </v-card-title>
           <v-card-text>
             <!-- Insert table here -->
-            <ProductDataTable
-              ref="productDataTableRef"
+            <ParticipantDataTable
+              ref="participantDataTableRef"
               :search-term="searchTerm"
             />
             <!-- <DraggableDataTable /> -->
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
-        <v-card>
-          <v-card-title> <h2>拍賣品管理</h2> </v-card-title>
-          <v-card-text>
-            <v-row>
-              <v-col cols="8">
-                <v-file-input
-                  v-model="uploadFile"
-                  label="匯入拍賣品資料Excel"
-                />
-              </v-col>
-              <v-col cols="4">
-                <v-btn
-                  size="large"
-                  color="primary"
-                  @click="handleUploadFile"
-                >
-                  確定匯入
-                </v-btn>
-              </v-col>
-            </v-row>
           </v-card-text>
         </v-card>
       </v-col>
@@ -105,6 +72,7 @@ onMounted(async () => {
   <!-- 登入對話框 -->
   <LoginDialog :disabled-auth="false" />
 </template>
+
 <style scoped lang="scss">
 .table-utils {
   color: green;

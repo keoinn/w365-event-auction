@@ -2,7 +2,7 @@
   "name": "w365-event-auction",
   "private": true,
   "type": "module",
-  "version": "0.0.0",
+  "version": "1.2.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -14,7 +14,9 @@
     "@vueuse/core": "^12.0.0",
     "axios": "^1.7.8",
     "maska": "^3.0.4",
+    "pinia-plugin-persistedstate": "^4.2.0",
     "roboto-fontface": "*",
+    "sweetalert2": "^11.15.2",
     "vue": "^3.4.31",
     "vuedraggable": "^4.1.0",
     "vuetify": "^3.6.14"

@@ -1,12 +1,16 @@
 <script setup>
-import { ref, watch, watchEffect } from 'vue'
+import { ref, watch } from 'vue'
 import { uploadImage } from '@/plugins/utils/requests/api/products.js'
-
+import { uploadImage as uploadNamecard } from '@/plugins/utils/requests/api/participant.js'
 // 組件接收資料
 const props = defineProps({
   imgurl: {
     type: String,
     default: ''
+  },
+  backend: {
+    type: String,
+    default: 'product'
   }
 })
 
@@ -35,14 +39,28 @@ const doUpload = async () => {
   showProcessBar.value = true
   const formData = new FormData()
   formData.append('image', ImageFile.value)
-
-  const res = await uploadImage(formData).catch(() => {
+  let res = null
+  if (props.backend === 'product') {
+    res = await uploadImage(formData).catch(() => {
     /* Error Handle */
     showUploadField.value = true
     showProcessBar.value = false
-    // TODO: alert
-  })
+      // TODO: alert
+    })
+  }
 
+  if (props.backend === 'namecard') {
+    res = await uploadNamecard(formData).catch(() => {
+    /* Error Handle */
+    showUploadField.value = true
+    showProcessBar.value = false
+      // TODO: alert
+    })
+  }
+
+  console.log(res)
+
+  
   showProcessBar.value = false
   ImageUrl.value = res.data.result.url
 }

@@ -4,7 +4,7 @@
       <router-view />
     </v-main>
 
-    <!-- <AppFooter /> -->
+    <ScreenFooter />
   </v-app>
 </template>
 

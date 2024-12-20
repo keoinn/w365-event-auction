@@ -4,7 +4,7 @@ const API_BASEURL = import.meta.env.VITE_API_BASEURL
 
 const requestInstance = axios.create({
   baseURL: API_BASEURL,
-  timeout: 10000
+  timeout: 300000
 })
 
 export default requestInstance

@@ -99,3 +99,12 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v2
 ```
+
+```sql
+
+INSERT INTO `auction_participants` (`ap_id`, `pa_name`, `auction_num`, `pa_phone`, `group`, `nickname`, `is_member`, `has_namecard`, `pa_namecard`, `ut`, `ct`, `dt`) VALUES
+(1001, '陳華', 1, '0919274991', '新世紀', 'Hun', 0, 0, NULL, '2024-12-20 18:59:47', '2024-12-20 18:59:22', NULL),
+(1002, '陳言', 2, '0912345678', '', '', 0, 0, NULL, '2024-12-21 00:46:26', '2024-12-21 00:40:27', NULL),
+(1003, '張三', NULL, '0911224558', '中科', '', 0, 0, NULL, '2024-12-21 02:06:15', '2024-12-21 00:57:05', NULL),
+(1004, '陳彥', 4, '0977111333', '東山', 'Yen', 1, 1, '[\"https:\\/\\/liff.synet-app.com\\/uploads\\/auction\\/namecards\\/1734720549_45a0234cd582afea7d6c.jpg\"]', '2024-12-21 02:49:15', '2024-12-21 02:49:15', NULL);
+```

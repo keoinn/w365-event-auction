@@ -1,5 +1,113 @@
-<!-- https://javokhirbekkhaydarov.medium.com/preloading-images-in-vue-js-67a91b8710a7 -->
+<script setup>
+import background_image from '@/assets/images/auction-background.jpg'
+import { ref, onMounted, watch } from 'vue'
+import { vMaska } from 'maska/vue'
+import { getAuction } from '@/plugins/utils/requests/api/products'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+
+const empty_auction_item = {
+  pa_id: '',
+  sell_price: '',
+  author: '',
+  ct: '',
+  dt: '',
+  get_price: '',
+  p_name: '',
+  p_order: '',
+  p_owner: '',
+  p_sn: '',
+  production_desc: '',
+  production_img: '',
+  soldout_time: '',
+  source: '',
+  start_price: '',
+  ut: ''
+}
+
+const auctionItem = ref(empty_auction_item)
+
+const options = {
+  mask: '9,99# 元',
+  tokens: {
+    9: { pattern: /[0-9]/, repeated: true }
+  },
+  reversed: true
+}
+
+const showBidderStr = ref('')
+
+const sync_timer = ref(null)
+
+const items = ref([])
+/**
+ * Demo data 
+ const items = ref([
+  {
+    src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg'
+  },
+  {
+    src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg'
+  },
+  {
+    src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg'
+  },
+  {
+    src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg'
+  },
+  {
+    src: 'https://e365.synet-app.com//img/upload/product/371_20230810164258.png'
+  }
+])
+*/
+
+onMounted(async () => {
+  await getAuctionInfo()
+  sync_timer.value = setInterval(() => {
+    if(route.path !== "/"){
+      clearInterval(sync_timer.value)
+    }
+    getAuctionInfo()
+  }, 500)
+  items.value = auctionItem.value.production_img.map((item) => {
+    return {
+      src: item
+    }
+  })
+})
+
+watch(
+  () => auctionItem.value.pa_id,
+  () => {
+    items.value = auctionItem.value.production_img.map((item) => {
+      return {
+        src: item
+      }
+    })
+  }
+)
+
+const getAuctionInfo = async () => {
+  const res = await getAuction()
+  auctionItem.value = res.data.result
+  if (auctionItem.value.get_price === null) {
+    auctionItem.value.get_price = auctionItem.value.start_price
+  }
+
+  showBidder()
+}
+
+const showBidder = () => {
+  if (auctionItem.value.p_owner) {
+    showBidderStr.value = auctionItem.value.p_owner_str
+  } else {
+    showBidderStr.value = '商品競拍中'
+  }
+}
+</script>
 <template>
+  <!-- DOCME:https://javokhirbekkhaydarov.medium.com/preloading-images-in-vue-js-67a91b8710a7 -->
   <v-container
     class="fill-height ma-0 pa-0"
     :style="{ backgroundImage: `url(${background_image})`, backgroundSize: 'cover' }"
@@ -69,8 +177,8 @@
 
             <v-col cols="6">
               <v-text-field
-                class="detailed-input"
                 v-model="showBidderStr"
+                class="detailed-input"
                 readonly
               >
                 <template #label>
@@ -114,109 +222,6 @@
     </v-container>
   </v-container>
 </template>
-
-<script setup>
-import background_image from '@/assets/images/auction-background.jpg'
-import { ref, onMounted, watch } from 'vue'
-import { vMaska } from 'maska/vue'
-import { getAuction } from '@/plugins/utils/requests/api/products'
-
-const empty_auction_item = {
-  pa_id: '',
-  sell_price: '',
-  author: '',
-  ct: '',
-  dt: '',
-  get_price: '',
-  p_name: '',
-  p_order: '',
-  p_owner: '',
-  p_sn: '',
-  production_desc: '',
-  production_img: '',
-  soldout_time: '',
-  source: '',
-  start_price: '',
-  ut: ''
-}
-
-const auctionItem = ref(empty_auction_item)
-
-const options = {
-  mask: '9,99# 元',
-  tokens: {
-    9: { pattern: /[0-9]/, repeated: true }
-  },
-  reversed: true
-}
-
-const showBidderStr = ref('')
-
-const sync_timer = ref(null)
-
-const items = ref([])
-/**
- * Demo data 
- const items = ref([
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg'
-  },
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg'
-  },
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg'
-  },
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg'
-  },
-  {
-    src: 'https://e365.synet-app.com//img/upload/product/371_20230810164258.png'
-  }
-])
-*/
-
-onMounted(async () => {
-  await getAuctionInfo()
-  sync_timer.value = setInterval(getAuctionInfo, 500)
-  items.value = auctionItem.value.production_img.map((item) => {
-    return {
-      src: item
-    }
-  })
-  console.log(items.value)
-})
-
-watch(
-  () => auctionItem.value.pa_id,
-  () => {
-    console.log('Pa_id changed')
-    items.value = auctionItem.value.production_img.map((item) => {
-      return {
-        src: item
-      }
-    })
-  }
-)
-
-const getAuctionInfo = async () => {
-  const res = await getAuction()
-  auctionItem.value = res.data.result
-  if (auctionItem.value.get_price === null) {
-    auctionItem.value.get_price = auctionItem.value.start_price
-  }
-
-  showBidder()
-}
-
-const showBidder = () => {
-  if (auctionItem.value.p_owner) {
-    showBidderStr.value = auctionItem.value.p_owner
-  } else {
-    showBidderStr.value = '商品競拍中'
-  }
-}
-</script>
 
 <style lang="scss">
 .product-title {

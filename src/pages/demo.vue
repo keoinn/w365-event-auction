@@ -1,3 +1,0 @@
-<template>
-  <ScreenPage />
-</template>

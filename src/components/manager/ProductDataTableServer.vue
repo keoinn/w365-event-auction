@@ -1,107 +1,5 @@
-<script setup>
-import { ref, watch, onMounted} from 'vue'
-import { getProducts, changeOrder, getProduct, saveProduct } from '@/plugins/utils/requests/api/products.js'
-import ImageUploader from '@/components/manager/ImageUploader.vue'
-
-const search = ref('')
-const serverItems = ref([])
-const loading = ref(true)
-const totalItems = ref(0)
-
-const dialog = ref(false)
-const emptyItem = ref({
-  pa_id: '',
-  p_sn: '',
-  p_name: '',
-  author: '',
-  source: '',
-  start_price: '',
-  sell_price: '',
-  p_owner: '',
-  soldout_time: '',
-  production_img: []
-})
-const editedItem = ref(emptyItem.value)
-
-const headers = ref([
-  { title: '系統序號', key: 'pa_id', align: 'start', sortable: true },
-  { title: '商品編號', key: 'p_sn', align: 'start', sortable: false },
-  { title: '拍賣品名稱', key: 'p_name', align: 'center' },
-  { title: '拍賣順序', key: 'p_order', align: 'center' },
-  { title: '動作', key: 'action', align: 'center' }
-])
-
-const props = defineProps({
-  searchTerm: {
-    type: String,
-    default: ''
-  }
-})
-
-watch(() => props.searchTerm, (newVal) => {
-  search.value = newVal
-})
-
-
-const options = ref({
-  page: 1,
-  itemsPerPage: 100,
-  sortBy: []
-})
-
-const refresh = async () => {
-  await loadItems(options.value)
-}
-
-const loadItems = async () => {
-  loading.value = true
-  const { data } = await getProducts()
-  serverItems.value = data.result.item
-  totalItems.value = data.result.total
-  loading.value = false
-}
-
-// 編輯拍賣品資料按鈕
-const handelEditItem = async (item_id) => {
-  const res = await getProduct(item_id)
-  editedItem.value = res.data.result
-  dialog.value = true
-}
-
-// 新增圖片
-const handelAddImages = () => {
-  editedItem.value.production_img.push('')
-}
-
-// 改變拍賣順序
-const handelChangeOrder = async (item, direction) => {
-  await changeOrder(item.pa_id, direction)
-  await refresh()
-}
-
-// 關閉編輯拍賣品資料對話框 -> 取消
-const handelDialogClose = () => {
-  dialog.value = false
-  editedItem.value = Object.assign({}, emptyItem.value)
-}
-
-// 更新拍賣品資料 -> 儲存
-const handelSaveEditItem = async () => {
-  await saveProduct(editedItem.value)
-  dialog.value = false
-  await refresh()
-}
-
-onMounted(async () => {
-  await loadItems(options.value)
-})
-// 導出 refresh 方法
-defineExpose({
-  refresh
-})
-</script>
-<!-- DOCME: https://github.com/vuetifyjs/vuetify/discussions/19160#discussioncomment-10235933 -->
-<!-- DOCME: https://bonze.tw/vue3-parent-call-child-method/ -->
+<!-- https://github.com/vuetifyjs/vuetify/discussions/19160#discussioncomment-10235933 -->
+<!-- https://bonze.tw/vue3-parent-call-child-method/ -->
 <template>
   <v-dialog
     v-model="dialog"
@@ -286,7 +184,7 @@ defineExpose({
     </v-card>
   </v-dialog>
 
-  <v-data-table
+  <v-data-table-server
     v-model:options="options"
     :headers="headers"
     :items="serverItems"
@@ -328,5 +226,92 @@ defineExpose({
         @click="handelEditItem(item.pa_id)"
       />
     </template>
-  </v-data-table>
+  </v-data-table-server>
 </template>
+
+<script setup>
+import { ref } from 'vue'
+import { getProducts, changeOrder, getProduct, saveProduct } from '@/plugins/utils/requests/api/products.js'
+import ImageUploader from '@/components/manager/ImageUploader.vue'
+
+const search = ref('')
+const serverItems = ref([])
+const loading = ref(true)
+const totalItems = ref(0)
+
+const dialog = ref(false)
+const emptyItem = ref({
+  pa_id: '',
+  p_sn: '',
+  p_name: '',
+  author: '',
+  source: '',
+  start_price: '',
+  sell_price: '',
+  p_owner: '',
+  soldout_time: '',
+  production_img: []
+})
+const editedItem = ref(emptyItem.value)
+
+const headers = ref([
+  { title: '系統序號', key: 'pa_id', align: 'start', sortable: true },
+  { title: '商品編號', key: 'p_sn', align: 'start', sortable: false },
+  { title: '拍賣品名稱', key: 'p_name', align: 'center' },
+  { title: '拍賣順序', key: 'p_order', align: 'center' },
+  { title: '動作', key: 'action', align: 'center' }
+])
+
+const options = ref({
+  page: 1,
+  itemsPerPage: 5,
+  sortBy: []
+})
+
+const refresh = async () => {
+  await loadItems(options.value)
+}
+
+const loadItems = async ({ page, itemsPerPage, sortBy }) => {
+  loading.value = true
+  const { data } = await getProducts()
+  serverItems.value = data.result.item
+  totalItems.value = data.result.total
+  loading.value = false
+}
+
+// 編輯拍賣品資料按鈕
+const handelEditItem = async (item_id) => {
+  const res = await getProduct(item_id)
+  editedItem.value = res.data.result
+  dialog.value = true
+}
+
+// 新增圖片
+const handelAddImages = () => {
+  editedItem.value.production_img.push('')
+}
+
+// 改變拍賣順序
+const handelChangeOrder = async (item, direction) => {
+  await changeOrder(item.pa_id, direction)
+  await refresh()
+}
+
+// 關閉編輯拍賣品資料對話框 -> 取消
+const handelDialogClose = () => {
+  dialog.value = false
+  editedItem.value = Object.assign({}, emptyItem.value)
+}
+
+// 更新拍賣品資料 -> 儲存
+const handelSaveEditItem = async () => {
+  await saveProduct(editedItem.value)
+  dialog.value = false
+  await refresh()
+}
+// 導出 refresh 方法
+defineExpose({
+  refresh
+})
+</script>
