@@ -117,6 +117,12 @@ onMounted(async () => {
 }
 </style>
 
+<style>
+html {
+  overflow-y: visible !important;
+}
+</style>
+
 <route lang="yaml">
 meta:
   layout: dashboard_template

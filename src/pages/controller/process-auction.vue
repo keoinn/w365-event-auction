@@ -56,7 +56,7 @@ onMounted(async () => {
     } else {
       handleAlert({
         auction: 'error',
-        text: '控制筆觸發加價，但已經有人得標。',
+        text: '控制筆觸發加價，但已經有人得標。'
       })
     }
   })
@@ -314,10 +314,10 @@ const handleChangeAuction = async (direction) => {
   <LoginDialog :disabled-auth="false" />
 </template>
 
-<style scoped>
+<style>
 /* DOCME: https://github.com/vuetifyjs/vuetify/issues/1197 */
 html {
-  overflow-y: hidden;
+  overflow-y: hidden !important;
 }
 </style>
 
