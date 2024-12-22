@@ -37,35 +37,12 @@ const options = {
 }
 
 const showBidderStr = ref('')
-
 const sync_timer = ref(null)
-
 const items = ref([])
-/**
- * Demo data 
- const items = ref([
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg'
-  },
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg'
-  },
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg'
-  },
-  {
-    src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg'
-  },
-  {
-    src: 'https://e365.synet-app.com//img/upload/product/371_20230810164258.png'
-  }
-])
-*/
-
 onMounted(async () => {
   await getAuctionInfo()
   sync_timer.value = setInterval(() => {
-    if(route.path !== "/"){
+    if (route.path !== '/') {
       clearInterval(sync_timer.value)
     }
     getAuctionInfo()
@@ -132,8 +109,7 @@ const showBidder = () => {
               </h1>
             </v-col>
           </v-row>
-
-          <!-- 作者 -->
+          <!-- 
           <v-row>
             <v-col cols="6">
               <v-text-field
@@ -147,7 +123,6 @@ const showBidder = () => {
               </v-text-field>
             </v-col>
 
-            <!-- 來源 -->
             <v-col cols="6">
               <v-text-field
                 class="detailed-input"
@@ -159,7 +134,7 @@ const showBidder = () => {
                 </template>
               </v-text-field>
             </v-col>
-          </v-row>
+          </v-row> -->
 
           <v-row>
             <v-col cols="6">
@@ -202,6 +177,14 @@ const showBidder = () => {
               </v-text-field>
             </v-col>
           </v-row>
+          <v-row class="note-row">
+            <v-col
+              cols="12"
+              align="center"
+            >
+              <span class="company-name"> 灝元商務科技 </span>
+            </v-col>
+          </v-row>
         </v-col>
         <v-col cols="6">
           <v-carousel
@@ -224,9 +207,18 @@ const showBidder = () => {
 </template>
 
 <style lang="scss">
+.note-row {
+  margin-top: -35px !important;
+}
+.company-name {
+  color: orangered !important;
+  font-size: 20px;
+  font-weight: bold;
+}
+
 .product-title {
   color: #fff !important;
-  font-size: 40px;
+  font-size: 50px;
   font-weight: bold;
 }
 

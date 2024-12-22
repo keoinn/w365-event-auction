@@ -51,7 +51,6 @@ const handleFullScreen = () => {
     } else if (document.msExitFullscreen) {
       document.msExitFullscreen()
     }
-    console.log('exitFullscreen')
   } else {
     if (element.requestFullscreen) {
       element.requestFullscreen()
@@ -62,7 +61,6 @@ const handleFullScreen = () => {
     } else if (element.msRequestFullscreen) {
       element.msRequestFullscreen()
     }
-    console.log('requestFullscreen')
   }
   isFullScreen.value = !isFullScreen.value
 }
