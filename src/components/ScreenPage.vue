@@ -182,7 +182,7 @@ const showBidder = () => {
               cols="12"
               align="center"
             >
-              <span class="company-name"> 灝元商務科技 </span>
+              <span class="company-name"> 拍賣系統: 灝元商務科技 </span>
             </v-col>
           </v-row>
         </v-col>
@@ -208,10 +208,10 @@ const showBidder = () => {
 
 <style lang="scss">
 .note-row {
-  margin-top: -35px !important;
+  margin-top: 35px !important;
 }
 .company-name {
-  color: orangered !important;
+  color: white !important;
   font-size: 20px;
   font-weight: bold;
 }

@@ -84,38 +84,41 @@ export const addAuctionPrice = (auctionId) => {
   return request
 }
 
-export const setAuctionPrice = (auctionId, price) => {
+export const setAuctionPrice = (auctionId, price, isForce = false) => {
   const request = requestInstance({
     method: 'POST',
     url: `/auction/current/set`,
     data: {
       auctionId,
       price,
+      isForce
     }
   })
 
   return request
 }
 
-export const changeAuction = (direction) => {
+export const changeAuction = (direction, page = '') => {
   const request = requestInstance({
     method: 'POST',
     url: `/auction/current/change-item`,
     data: {
-      direction
+      direction,
+      page
     }
   })
 
   return request
 }
 
-export const setFinalBidder = (auctionId, bidder_num) => {
+export const setFinalBidder = (auctionId, bidder_num, isForce = false) => {
   const request = requestInstance({
     method: 'POST',
     url: `/auction/current/set-final-bidder`,
     data: {
       auctionId,
       bidder_num,
+      isForce
     }
   })
 
