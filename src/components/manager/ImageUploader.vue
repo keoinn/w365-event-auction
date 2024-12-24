@@ -58,9 +58,6 @@ const doUpload = async () => {
     })
   }
 
-  console.log(res)
-
-  
   showProcessBar.value = false
   ImageUrl.value = res.data.result.url
 }

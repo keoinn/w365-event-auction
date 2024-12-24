@@ -2,7 +2,7 @@
 import { ref, watch, onMounted} from 'vue'
 import { getProducts, changeOrder, getProduct, saveProduct } from '@/plugins/utils/requests/api/products.js'
 import ImageUploader from '@/components/manager/ImageUploader.vue'
-
+import { handleBackendMsg } from '@/plugins/utils/alert'
 const search = ref('')
 const serverItems = ref([])
 const loading = ref(true)
@@ -87,7 +87,8 @@ const handelDialogClose = () => {
 
 // 更新拍賣品資料 -> 儲存
 const handelSaveEditItem = async () => {
-  await saveProduct(editedItem.value)
+  const res = await saveProduct(editedItem.value)
+  handleBackendMsg(res.data.status, res.data.msg, true)
   dialog.value = false
   await refresh()
 }

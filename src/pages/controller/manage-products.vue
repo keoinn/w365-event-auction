@@ -4,6 +4,7 @@ import { uploadExcel, getProducts } from '@/plugins/utils/requests/api/products.
 import ProductDataTable from '@/components/manager/ProductDataTable.vue'
 import LoginDialog from '@/components/LoginDialog.vue'
 import { useAppStore } from '@/stores/app'
+import { handleBackendMsg } from '@/plugins/utils/alert'
 
 const appStore = useAppStore()
 
@@ -16,9 +17,10 @@ const handleUploadFile = async () => {
   const formData = new FormData()
   formData.append('excel', uploadFile.value)
 
-  await uploadExcel(formData)
+  const res = await uploadExcel(formData)
   productDataTableRef.value.refresh()
-
+  console.log(res)
+  handleBackendMsg(res.data.status, res.data.msg, true)
   uploadFile.value = null
 }
 
@@ -75,32 +77,63 @@ onMounted(async () => {
         </v-card>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="12">
-        <v-card>
-          <v-card-title> <h2>拍賣品管理</h2> </v-card-title>
-          <v-card-text>
-            <v-row>
-              <v-col cols="8">
-                <v-file-input
-                  v-model="uploadFile"
-                  label="匯入拍賣品資料Excel"
-                />
-              </v-col>
-              <v-col cols="4">
-                <v-btn
-                  size="large"
-                  color="primary"
-                  @click="handleUploadFile"
-                >
-                  確定匯入
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+
+    <v-expansion-panels>
+      <v-expansion-panel>
+        <v-expansion-panel-title>
+          <h4>拍賣品匯入</h4>
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <v-row>
+            <v-col cols="6">
+              <v-file-input
+                v-model="uploadFile"
+                label="匯入拍賣品資料Excel"
+              >
+                <template #details>
+                  <a
+                    href="https://liff.synet-app.com/download/template/import/auction_products.xlsx"
+                    target="_blank"
+                    download
+                  >
+                    範例檔案
+                  </a>
+                </template>
+              </v-file-input>
+            </v-col>
+            <v-col cols="3">
+              <v-btn
+                size="large"
+                color="primary"
+                @click="handleUploadFile"
+              >
+                確定匯入
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+
+      <v-expansion-panel>
+        <v-expansion-panel-title>
+          <h4>拍賣結果下載</h4>
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <v-row>
+            <v-col cols="3">
+              <v-btn
+                size="large"
+                color="primary"
+                href="https://liff.synet-app.com/api/utilite/auction/result/excel"
+                text="下載拍賣結果"
+              >
+                下載拍賣結果
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-expansion-panels>
   </v-container>
   <!-- 登入對話框 -->
   <LoginDialog :disabled-auth="false" />
