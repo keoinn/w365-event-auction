@@ -108,7 +108,7 @@ const handleAddSellPrice = async () => {
 const handleSetSellPrice = async () => {
   const res = await setAuctionPrice(auctionItem.value.pa_id, setSellPrice.value)
   await asyncAuctionInfo()
-  handleBackendMsg(res.data.status, res.data.msg)
+  handleBackendMsg(res.data.status, res.data.msg, true)
 }
 
 // 確定得標
